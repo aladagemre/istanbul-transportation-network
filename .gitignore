@@ -1,0 +1,7 @@
+*.pyc
+venv/**
+.DS_Store
+.Rapp.history
+.Rhistory
+trash/**
+.idea/**
