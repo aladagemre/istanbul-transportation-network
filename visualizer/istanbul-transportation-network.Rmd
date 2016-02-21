@@ -5,6 +5,13 @@ date: "10 July 2015"
 output: html_document
 ---
 
+Install required libraries
+
+```{r}
+# install.packages(c("igraph", "ggmap", "popgraph", "plyr", "ppls"))
+library(knitr)
+```
+
 # Unweighted Network
 
 ## Loading Data
@@ -112,6 +119,18 @@ E(g2)$betweenness = edge.betweenness.estimate(g2, directed=TRUE, cutoff=10, weig
 E(g2)$logbetweenness = log(E(g2)$betweenness)
 ```
 
+Now let's see the degree distribution of the weighted network:
+
+```{r}
+plot(degree.distribution(g2), breaks=100, xlab="Derece", ylab="Bulunma Orani", main="Derece Dagilimi")
+table(degree(g2))
+```
+
+```{r}
+max_degree_node = which.max(degree.distribution(g2))
+```
+
+
 ## Draw the map
 
 Now we draw the map with the edge thickness and color adjusted to edge weight (bus frequency).
@@ -122,7 +141,7 @@ map11 = get_map(location, maptype="watercolor", source="osm", zoom=11)
 
 p2 = ggmap(map11)
 p2 = p2 + geom_nodeset( aes(x=Longitude, y=Latitude, size=size, label=label), g2)
-p2 = p2 + geom_edgeset( aes(x=Longitude, y=Latitude, shape=label, label=label, size=weight, color=weight), g2, alpha=1.0) + scale_colour_continuous(trans = 'reverse')
+p2 = p2 + geom_edgeset( aes(x=Longitude, y=Latitude, shape=label, label=label, size=weight, color=weight), g2, alpha=1.0) + scale_colour_continuous(low="#f98e9e", high="#9a0017")
 p2 + xlab("Longitude") + ylab("Latitude")
 #ggsave ("map2.png", dpi = 200)
 ```
@@ -145,11 +164,12 @@ g3 = delete.edges(g2, small_edges)
 Now plot the map according to logarithmic edge betweenness:
 
 ```{r}
+E(g3)$size=0.1
 location = c(mean(stops$lon), mean(stops$lat))
 map12 = get_map(location, maptype="watercolor", source="osm", zoom=12)
 p3 = ggmap(map12)
-p3 = p3 + geom_nodeset( aes(x=Longitude, y=Latitude, size=size, label=label), g3)
-p3 = p3 + geom_edgeset( aes(x=Longitude, y=Latitude, shape=label, label=label, size=logbetweenness, color=logbetweenness), g3, alpha=1.0) + scale_colour_continuous(trans = 'reverse')
+#p3 = p3 + geom_nodeset( aes(x=Longitude, y=Latitude, size=size, label=label), g3)
+p3 = p3 + geom_edgeset( aes(x=Longitude, y=Latitude, shape=label, label=label, size=size, color=logbetweenness), g3, alpha=1.0) + scale_colour_continuous(low="#f98e9e", high="#9a0017")
 p3 + xlab("Longitude") + ylab("Latitude")
 #ggsave ("map3.png", dpi = 200)
 ```
@@ -168,11 +188,15 @@ V(g2)$logbetweenness = log(V(g2)$betweenness)
 dd = get.data.frame(g2, what=c("vertices"))
 
 sorted_list = dd[order(dd$betweenness, decreasing = TRUE),]
+top30 = sorted_list[1:30,c("label","logbetweenness")]
 
-for (i in 1:20 ) {
-  print(sorted_list$label[i])
-}
+#for (i in 1:20 ) {
+#  print(sorted_list$label[i])
+#}
 
+```
+```{r, echo="FALSE", results="asis"}
+print(kable(top30, format="markdown", digits=3, caption = "Top 30 nodes for Node Betweenness score"))
 ```
 
 Now plot the map according to node betweenness:
