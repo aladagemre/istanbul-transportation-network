@@ -1,0 +1,6 @@
+digraph G {
+   ".." -> "Cengiz Topel" [ label="59R" ];
+   "Cengiz Topel" -> Nispetiye [ label="59R" ];
+   "Nispetiye" -> "Boğaziçi Üniversite" [ label="59R" ];
+   "Boğaziçi Üniversite" -> "Rumelihisarüstü" [ label="59R" ];
+}
