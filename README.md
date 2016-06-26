@@ -1,4 +1,6 @@
-# City SDK API Crawler for Istanbul Bus Network
+# City SDK API Crawler and Visualizer for Istanbul Bus Network
+
+This project aims to crawl bus route and stop informations from CitySDK and visualize the bus routes of Istanbu on a spatial map. Work has been presented at Akademik Bilişim 2016 conference at Aydın, Turkey. Paper and visuals can be seen in paper folder.
 
 ## Installing Dependencies
 
